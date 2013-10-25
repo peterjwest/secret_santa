@@ -1,0 +1,15 @@
+{
+  "name": "kon-secret-santa",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.4.0",
+    "connect-lesscss": "0.2.0",
+    "connect-mongo": "0.3.3",
+    "mongoose": "3.6.20",
+    "jade": "~0.35.0"
+  },
+  "devDependencies": {
+    "jasmine-node": "1.11.0"
+  }
+}
