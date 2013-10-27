@@ -1,14 +1,60 @@
 doctype 5
 html
     head
-        title KON Secret Santa XXXX
+        title KON Secret Santa 2013
+        meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
         link(rel='stylesheet', href='/css/style.css')
-    body
-        .container
-            h1
-                img(src='/images/title.png', alt='KON Secret Santa XXXX')
-            .frame
-                .canvas
+    body.preload
+        .container-main.container
+            a(href='')
+                h1.title
+                    img(src='/images/title.png', alt='KON Secret Santa 2013')
+
+            .section
+                h2 What?
+                p: :markdown
+                    This is a secret santa app for members of the exclusive club [KON](http://www.knights-of-ni.co.uk/board).
+
+            .section
+                h2 How?
+                p Sign up and you'll get an email when it starts. You can also login to find out your secret santee.
+                if user
+                    .well: .clearfix
+                        p.pull-left Signed in as #{user.name} (#{user.email})
+                        a.pull-right(href='/logout') Logout
+                else
+                    form.form-inline(method='POST', action='/').clearfix
+                        .checkbox: label.btn.btn-default.btn-info
+                            = 'New user? '
+                            input#login-register(type='checkbox', name='register')
+
+                        .well.clearfix
+                            if errors.login
+                                each error in errors.login
+                                    .alert.alert-danger= errors.login
+
+                            .form-group.pull-left.hide
+                                label.sr-only(for='login-name') Name
+                                input#login-name.form-control(type='text', name='name', placeholder='Name', value=login && login.name)
+                            .form-group.form-group-wide.pull-left
+                                label.sr-only(for='login-email') Email address
+                                input#login-email.form-control(type='email', name='email', placeholder='Email', required, value=login && login.email)
+                            .form-group.pull-left
+                                label.sr-only(for='login-password') Password
+                                input#login-password.form-control(type='password', name='password', placeholder='Password',required)
+
+                            button#login-submit.btn.btn-default.btn-primary.pull-right(type="submit") Sign in
+
+            .section
+                h2 Entrants
+                p Who's entered this year:
+                if users
+                    ul: each user in users
+                        li= user.name
+
+            .section
+                h2 Admin
 
         script(src='/js/vendor/jquery-1.10.2.js')
+        script(src='/js/vendor/raf.js')
         script(src='/js/app.js')

@@ -1,18 +1,83 @@
 @import './bootstrap/bootstrap.less';
 
+@container-tablet: 570px + @grid-gutter-width;
+@container-desktop: @container-tablet;
+@container-lg-desktop: @container-tablet;
+
+// Utility
+
+.preload * {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+}
+
+.transition(@items) {
+    -webkit-transition: @items;
+    -moz-transition: @items;
+    -ms-transition: @items;
+    -o-transition: @items;
+    transition: @items;
+}
+
+.hide {
+    display: none;
+}
+
+// Layout
+
 body {
-    background: url('/images/background.png') top center repeat-x #587070;
-    min-height: 1040px;
+    background: url('/images/background.png') top center repeat-x #AEE1F4;
     font-family: Trebuchet MS,Verdana,sans-serif;
+    min-height: 870px;
+}
+
+.container-main {
+    position: relative;
+    background-color: white;
+    margin-top: 160px;
+    padding-top: 60px;
+    padding-bottom: 30px;
+    box-shadow: 0px 9px 2px rgba(0, 0, 0, 0.5);
+    .transition(background-color 0.5s);
+}
+
+.section {
+    .clearfix();
+}
+
+// Typography
+
+ul {
+    padding-left: 25px;
 }
 
 li {
-    margin-left: 15px;
     list-style-image: url('/images/red_mushroom.png');
 }
 
 .alt li {
     list-style-image: url('/images/green_mushroom.png');
+}
+
+.btn {
+    position: relative;
+    border: none;
+    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+}
+
+.btn:active {
+    top: 1px; left: 1px;
+    box-shadow: -1px -1px 0px rgba(0, 0, 0, 0.7);
+}
+
+.btn-primary {
+    background-image: url('/images/primary_stripe.png');
+}
+
+.btn-primary:active {
+    background-image: url('/images/primary_stripe_active.png');
 }
 
 .btn-launch {
@@ -39,4 +104,98 @@ li {
     border: 2px solid #8C1717;
     padding: 1px 4px;
     background: #EE0000 url('/images/error_stripe.png') repeat;
+}
+
+// Forms
+
+.form-inline {
+    .form-row {
+        .clearfix();
+        margin-bottom: 6px;
+    }
+
+    .form-group {
+        margin-right: 5px;
+        width: 120px;
+    }
+
+    .form-group-wide {
+        width: 190px;
+    }
+
+    .checkbox {
+        margin: 0;
+        margin-bottom: 10px;
+        padding: 0;
+    }
+
+    .checkbox input[type="checkbox"] {
+        float: none;
+        margin-left: 0;
+    }
+
+    .checkbox label {
+        display: inline-block;
+    }
+}
+
+// Elements
+
+.well {
+    label {
+        font-weight: normal;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .alert {
+        padding: 8px 12px;
+        margin-bottom: 10px;
+    }
+}
+
+.title {
+    display: block;
+    position: absolute;
+    margin: 0 auto;
+    height: 142px;
+    left: -30px; top: -80px;
+    line-height: 142px;
+
+    img {
+        display: block;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: @screen-xs-max) {
+    .title {
+        width: 100%;
+        left: 0;
+    }
+
+    .container-main {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+}
+
+@media (max-width: 640px) {
+    .title img {
+        display: inline-block;
+        vertical-align: middle;
+        width: 100%;
+    }
+}
+
+@media (max-width: 479px) {
+    .container-main {
+        margin-top: 80px;
+        padding-top: 30px;
+    }
+
+    body {
+        min-height: 960px;
+    }
 }
