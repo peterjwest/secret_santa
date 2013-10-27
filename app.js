@@ -9,7 +9,7 @@ var sendgrid  = require('sendgrid')(
   process.env.SENDGRID_PASSWORD
 );
 
-mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/secret-santa');
+mongoose.connect(process.env['MONGOLAB_URI'] || 'mongodb://localhost/secret-santa');
 
 var formatErrors = function(err) {
     return err ? Object.keys(err.errors).map(function(key) {
