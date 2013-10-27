@@ -10,6 +10,7 @@
     "jade": "0.35.0",
     "markdown": "0.5.0",
     "bcrypt": "0.7.7",
-    "mongoose-validate": "0.0.5"
+    "mongoose-validate": "0.0.5",
+    "sendgrid": "0.3.1"
   }
 }

@@ -4,6 +4,10 @@ var mongoose = require('mongoose');
 var fs = require('fs');
 var User = require('./lib/user')(mongoose);
 var app = express();
+var sendgrid  = require('sendgrid')(
+  process.env.SENDGRID_USERNAME,
+  process.env.SENDGRID_PASSWORD
+);
 
 mongoose.connect(process.env['MONGOHQ_URL'] || 'mongodb://localhost/secret-santa');
 
