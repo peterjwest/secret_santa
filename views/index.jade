@@ -100,6 +100,20 @@ html
                     h2 Exclusions
                     p People who can't get each other
 
+                    form.form-inline(method='POST', action='/exclude')
+                        .form-group
+                            select.form-control(name='exclude[]')
+                                each u in users
+                                    option(value=u.email)= u.name
+                        span= ' and '
+                        .form-group
+                            select.form-control(name='exclude[]')
+                                each u in users
+                                    option(value=u.email)= u.name
+                        .form-button
+                            button#exlude-submit.btn.btn-default.pull-right(type="submit") Exclude
+
+
                 .section
                     h2 Mission control
                     form(method='POST', action='/launch')

@@ -60,6 +60,15 @@ app.get('/unlock', function(req, res) {
     res.redirect('/');
 });
 
+app.post('/exclude', auth.admin,  function(req, res) {
+    console.log(req.body)
+    var valid = false;
+    if (valid) {
+        return res.redirect('/');
+    }
+    res.render('index');
+});
+
 app.post('/launch', auth.admin,  function(req, res) {
     var solution = solver(res.locals.users);
     if (solution) {
