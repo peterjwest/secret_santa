@@ -1,21 +1,15 @@
 var express = require('express');
-var less = require('connect-lesscss');
+var less = require('./lib/less-parser');
 var mongoose = require('mongoose');
-var fs = require('fs');
-var User = require('./lib/user')(mongoose);
+var sendgrid  = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
+var verifyCode = require('./lib/verify-code');
+var solver = require('./lib/solver');
+var User = require('./model/user')(mongoose, sendgrid, verifyCode);
+var auth = require('./controller/auth')(User);
+var main = require('./controller/main')(User);
 var app = express();
-var sendgrid  = require('sendgrid')(
-  process.env.SENDGRID_USERNAME,
-  process.env.SENDGRID_PASSWORD
-);
 
 mongoose.connect(process.env['MONGOLAB_URI'] || 'mongodb://localhost/secret-santa');
-
-var formatErrors = function(err) {
-    return err ? Object.keys(err.errors).map(function(key) {
-        return err.errors[key].type;
-    }) : [];
-};
 
 app.configure(function() {
     app.set('views', __dirname + '/views');
@@ -26,7 +20,8 @@ app.configure(function() {
     app.use(express.session({secret: '1234'}));
     app.use('/css/style.css', less('public/less/style.less'));
     app.use(express.static(__dirname + '/public'));
-    app.use(User.checkAuth);
+    app.use(auth.check);
+    app.use(main.users);
     app.use(app.router);
 });
 
@@ -39,16 +34,42 @@ app.configure('production', function() {
     app.use(express.errorHandler());
 });
 
-app.get('/', User.all, function(req, res) {
+app.get('/', function(req, res) {
+    if (res.locals.user) {
+        res.locals.user.encryptSanta('Pete');
+        res.locals.user.save();
+    }
     res.render('index');
 });
 
-app.post('/', User.login, User.all, function(req, res) {
-    if (req.session.user) return res.redirect('/');
+app.post('/', auth.login, function(req, res) {
+    if (res.locals.user) return res.redirect('/');
     res.render('index');
 });
 
-app.get('/logout', User.logout, function(req, res) {
+app.post('/verify', auth.authenticated, auth.verify,  function(req, res) {
+    if (res.locals.user.verified) return res.redirect('/');
+    res.render('index');
+});
+
+app.post('/unlock', auth.authenticated, auth.unlock,  function(req, res) {
+    res.render('index');
+});
+
+app.get('/unlock', function(req, res) {
+    res.redirect('/');
+});
+
+app.post('/launch', auth.admin,  function(req, res) {
+    var solution = solver(res.locals.users);
+    if (solution) {
+        console.log(solution.map(function(s) { return s.giver.name+' => '+s.recipient.name; }));
+        return res.redirect('/');
+    }
+    res.render('index');
+});
+
+app.get('/logout', auth.logout, function(req, res) {
     res.redirect('/');
 });
 

@@ -17,43 +17,93 @@ html
 
             .section
                 h2 How?
-                p Sign up and you'll get an email when it starts. You can also login to find out your secret santee.
+                p Sign up and verify your account. You'll get an email when it starts. You can also login to find out your secret santa.
                 if user
-                    .well: .clearfix
-                        p.pull-left Signed in as #{user.name} (#{user.email})
-                        a.pull-right(href='/logout') Logout
-                else
-                    form.form-inline(method='POST', action='/').clearfix
-                        .checkbox: label.btn.btn-default.btn-info
-                            = 'New user? '
-                            input#login-register(type='checkbox', name='register')
+                    .well.well-success
+                        .clearfix
+                            h4.pull-left Signed in as #{user.name} (#{user.email})
+                            a.btn.btn-default.pull-right(href='/logout') Logout
 
-                        .well.clearfix
+                    if !user.verified
+                        .well.well-primary
+                            h3 Verify your account
+                            form.form-inline(method='POST', action='/verify').clearfix
+
+                                if errors.verify
+                                    .alert.alert-danger= errors.verify
+
+                                .form-group.form-group-l.pull-left
+                                    label.sr-only(for='verify-email') The code we emailed you
+                                    input#verify-email.form-control(type='text', name='verify_email', placeholder='The code we emailed you', required)
+
+                                .form-group.form-group.pull-left
+                                    label.sr-only(for='verify-kon') Mo's house number
+                                    input#verify-kon.form-control(type='text', name='verify_kon', placeholder="Mo's house number", required)
+
+                                button#login-submit.btn.btn-primary.pull-right(type="submit") Verify me
+                    else
+                        .well.well-primary
+                            if santa
+                                a.btn.btn-primary.pull-right(href="/") Hide
+                                h3 Your secret santa is:
+                                h2.santa= santa
+
+                            else
+                                h3 Unlock you secret santee
+                                form.form-inline(method='POST', action='/unlock').clearfix
+
+                                    if errors.unlock
+                                        .alert.alert-danger= errors.unlock
+
+                                    .form-group.form-group-s
+                                        label.sr-only(for='login-password') Password
+                                        input#login-password.form-control(type='password', name='password', placeholder='Password',required)
+
+                                    .form-button
+                                        button#login-submit.btn.btn-primary.pull-right(type="submit") Unlock
+
+                else
+                    - login = login || {}
+                    form.form-inline(method='POST', action='/').clearfix
+
+                        .well.well-primary.clearfix
                             if errors.login
                                 each error in errors.login
-                                    .alert.alert-danger= errors.login
+                                    .alert.alert-danger= error
 
-                            .form-group.pull-left.hide
-                                label.sr-only(for='login-name') Name
-                                input#login-name.form-control(type='text', name='name', placeholder='Name', value=login && login.name)
-                            .form-group.form-group-wide.pull-left
+                            .form-group
                                 label.sr-only(for='login-email') Email address
-                                input#login-email.form-control(type='email', name='email', placeholder='Email', required, value=login && login.email)
-                            .form-group.pull-left
+                                input#login-email.form-control(type='email', name='email', placeholder='Email', required, value=login.email)
+                            .form-group.form-group-s
                                 label.sr-only(for='login-password') Password
                                 input#login-password.form-control(type='password', name='password', placeholder='Password',required)
 
-                            button#login-submit.btn.btn-default.btn-primary.pull-right(type="submit") Sign in
+                            .form-button: .checkbox: label.btn.btn-default.btn-info
+                                = 'New user? '
+                                input#login-register(type='checkbox', name='register' checked=login.register)
+                            .form-group.form-group-s(class=login.register ? '' : 'hide')
+                                label.sr-only(for='login-name') Name
+                                input#login-name.form-control(type='text', name='name', placeholder='Name', value=login.name)
+
+                            .form-button
+                                button#login-submit.btn.btn-default.btn-primary(type='submit') Sign in
 
             .section
-                h2 Entrants
+                h2 Santas
                 p Who's entered this year:
                 if users
-                    ul: each user in users
-                        li= user.name
+                    ul: each u in users
+                        li #{u.name} #{user && user.verified ? '('+u.email+')' : ''}
 
-            .section
-                h2 Admin
+            if user && user.admin
+                .section
+                    h2 Exclusions
+                    p People who can't get each other
+
+                .section
+                    h2 Mission control
+                    form(method='POST', action='/launch')
+                        button.btn.btn-primary.btn-lg(type='submit') Launch
 
         script(src='/js/vendor/jquery-1.10.2.js')
         script(src='/js/vendor/raf.js')
