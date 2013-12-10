@@ -29,7 +29,7 @@
 
 body {
     background: url('/images/background.png') top center repeat-x #AEE1F4;
-    font-family: Trebuchet MS,Verdana,sans-serif;
+    font-family: Arial,sans-serif;
     min-height: 870px;
 }
 
@@ -49,48 +49,63 @@ body {
 
 // Typography
 
+h1, h2, h3 {
+    color: #2F63A5;
+}
+
 ul {
-    padding-left: 25px;
+    padding-left: 0;
 }
 
 li {
-    list-style-image: url('/images/red_mushroom.png');
+    padding-left: 25px;
+    list-style-type: none;
+    background: no-repeat 3px center url('/images/mushroom.png');
+    line-height: 24px;
 }
 
-.alt li {
-    list-style-image: url('/images/green_mushroom.png');
-}
-
-.btn {
+.btn, .btn:hover {
     position: relative;
     border: none;
-    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+    color: white;
+    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
 }
 
 .btn:active {
     top: 1px; left: 1px;
-    box-shadow: -1px -1px 0px rgba(0, 0, 0, 0.7);
+    color: white;
+    box-shadow: -1px -1px 0px rgba(0, 0, 0, 0.6);
+}
+
+.btn-default {
+    &, &:hover {
+        background-color: #11C1F8;
+    }
+    &:active {
+        background-color: #00A6DA;
+    }
 }
 
 .btn-primary {
     background-image: url('/images/primary_stripe.png');
+    &:active {
+        background-image: url('/images/primary_stripe_active.png');
+    }
 }
 
-.btn-primary:active {
-    background-image: url('/images/primary_stripe_active.png');
+.btn-warning {
+    &, &:hover {
+        background-image: url('/images/warning_stripe.png');
+    }
+    &:active {
+        background-image: url('/images/warning_stripe_active.png');
+    }
 }
 
-.btn-launch {
-    margin: 20px 0px;
-}
-
-.btn-launch a {
-    font-size: 200%;
-    font-style: bold;
-    color: white;
-    padding: 2px 6px;
-    margin: 30px 0px;
-    background: #EE0000 url('/images/error_stripe.png') repeat;
+.alert-danger {
+    background-color: #FF3E37;
+    border-color: #B91930;
+    color: #FFFFFF;
 }
 
 .error {
@@ -115,17 +130,29 @@ li {
     }
 
     .form-group {
-        margin-right: 5px;
-        width: 120px;
+        width: 200px;
+
+        &.form-group-s {
+            width: 120px;
+        }
+
+        &.form-group-l {
+            width: 210px;
+        }
     }
 
-    .form-group-wide {
-        width: 190px;
+    .form-button {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .form-group, .form-button {
+        margin-right: 5px;
+        margin-bottom: 10px;
     }
 
     .checkbox {
         margin: 0;
-        margin-bottom: 10px;
         padding: 0;
     }
 
@@ -137,22 +164,73 @@ li {
     .checkbox label {
         display: inline-block;
     }
+
+    .btn {
+        display: inline-block;
+        margin-right: 1px;
+        padding: 7px 12px;
+    }
+
+    .well {
+        padding-bottom: 9px;
+    }
 }
 
 // Elements
 
 .well {
+    margin-bottom: 10px;
+
+
     label {
         font-weight: normal;
     }
 
-    p {
-        margin: 0;
+    h3, h4 {
+        margin: 6px 0;
+        font-size: 18px;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    h3 {
+        font-size: 20px;
+        margin: 0 0 10px;
     }
 
     .alert {
         padding: 8px 12px;
         margin-bottom: 10px;
+    }
+
+    &.well-success {
+        background-color: #DEFFD8;
+        border-color: #A6EE8F;
+
+        h3, h4 {
+            color: #1BA300;
+        }
+
+        .btn-default {
+            background-color: #5cb85c;
+            border-color: #4cae4c;
+        }
+    }
+
+    &.well-primary {
+        background: #B8EEFF;
+        border-color: #61DFFF;
+
+        h3, h4 {
+            color: #377FFF;
+        }
+
+        input {
+            border-width: 0;
+        }
+
+        .btn-default {
+            background-color: #1887FF;
+        }
     }
 }
 
@@ -170,6 +248,18 @@ li {
     }
 }
 
+h2.santa {
+    margin-left: 30px;
+}
+
+.btn-lg {
+    padding: 10px 25px;
+    border-radius: 3px;
+    font-size: 30px;
+    color: white;
+    border-width: 1px;
+}
+
 @media (max-width: @screen-xs-max) {
     .title {
         width: 100%;
@@ -178,6 +268,12 @@ li {
 
     .container-main {
         background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .form-inline {
+        .btn {
+            margin-bottom: 15px;
+        }
     }
 }
 

@@ -10,7 +10,7 @@ doc.ready(function() {
     win.bind('scroll', function(e) {
         var newScroll = win.scrollTop();
         scroll = scroll || newScroll;
-        speed += Math.pow((newScroll - scroll) * 0.027, 2);
+        speed += 0.06 * Math.abs(newScroll - scroll);
         scroll = newScroll;
     });
 
@@ -19,8 +19,9 @@ doc.ready(function() {
         if (newSpeed > 0) {
             slide += newSpeed;
             speed = speed * 0.97;
-            body.css('background-position-x', -slide);
+            body.css('background-position', (-slide)+'px 0');
         }
+        console.log(newSpeed);
         window.requestAnimationFrame(updateBackground);
     };
     updateBackground();
