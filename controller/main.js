@@ -1,3 +1,5 @@
+var solver = require('../lib/solver');
+
 module.exports = function(User, Exclusion) {
     return {
         users: function(req, res, next) {
@@ -16,6 +18,14 @@ module.exports = function(User, Exclusion) {
                 });
             }
             res.locals.exclusions = [];
+            next();
+        },
+
+        checkPossible: function(req, res, next) {
+            var user = res.locals.user;
+            if (user && user.admin) {
+                res.locals.possible = !!solver(res.locals.users);
+            }
             next();
         }
     };

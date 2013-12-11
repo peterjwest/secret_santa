@@ -123,8 +123,10 @@ html
 
                 .section
                     h2 Mission control
-                    form(method='POST', action='/launch')
-                        button.btn.btn-warning.btn-lg(type='submit') Launch
+                    form.launch(method='POST', action='/launch')
+                        button.btn.btn-danger.btn-lg.pull-left(type='submit', disabled=!possible) Launch
+                        if !possible
+                            h3.pull-left Warning! secret santa not possible.
 
         script(src='/js/vendor/jquery-1.10.2.js')
         script(src='/js/vendor/raf.js')

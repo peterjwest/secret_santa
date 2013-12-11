@@ -19,11 +19,13 @@ app.configure(function() {
     app.use(express.bodyParser());
     app.use(express.cookieParser());
     app.use(express.session({secret: '1234'}));
+    app.use(express.methodOverride());
     app.use('/css/style.css', less('public/less/style.less'));
     app.use(express.static(__dirname + '/public'));
     app.use(auth.check);
     app.use(main.users);
     app.use(main.exclusions);
+    app.use(main.checkPossible);
     app.use(app.router);
 });
 
