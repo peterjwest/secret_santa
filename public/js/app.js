@@ -21,7 +21,6 @@ doc.ready(function() {
             speed = speed * 0.97;
             body.css('background-position', (-slide)+'px 0');
         }
-        console.log(newSpeed);
         window.requestAnimationFrame(updateBackground);
     };
     updateBackground();

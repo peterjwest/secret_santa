@@ -21,14 +21,13 @@ html
                 if user
                     .well.well-success
                         .clearfix
-                            h4.pull-left Signed in as #{user.name} (#{user.email})
+                            h4.pull-left Signed in as #{user.name}
                             a.btn.btn-default.pull-right(href='/logout') Logout
 
                     if !user.verified
                         .well.well-primary
                             h3 Verify your account
                             form.form-inline(method='POST', action='/verify').clearfix
-
                                 if errors.verify
                                     .alert.alert-danger= errors.verify
 
@@ -59,8 +58,7 @@ html
                                         label.sr-only(for='login-password') Password
                                         input#login-password.form-control(type='password', name='password', placeholder='Password',required)
 
-                                    .form-button
-                                        button#login-submit.btn.btn-primary.pull-right(type="submit") Unlock
+                                    button#login-submit.btn.btn-primary(type="submit") Unlock
 
                 else
                     - login = login || {}
@@ -85,8 +83,7 @@ html
                                 label.sr-only(for='login-name') Name
                                 input#login-name.form-control(type='text', name='name', placeholder='Name', value=login.name)
 
-                            .form-button
-                                button#login-submit.btn.btn-default.btn-primary(type='submit') Sign in
+                            button#login-submit.btn.btn-default.btn-primary(type='submit') Sign in
 
             .section
                 h2 Santas
@@ -105,13 +102,12 @@ html
                             select.form-control(name='exclude[]')
                                 each u in users
                                     option(value=u.email)= u.name
-                        span= ' and '
+                        span.divider-inline= ' and '
                         .form-group
                             select.form-control(name='exclude[]')
                                 each u in users
                                     option(value=u.email)= u.name
-                        .form-button
-                            button#exlude-submit.btn.btn-default.pull-right(type="submit") Exclude
+                        button#exclude-submit.btn.btn-default(type="submit") Exclude
 
                     ul.alt
                         each e in exclusions

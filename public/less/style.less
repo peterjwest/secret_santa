@@ -31,6 +31,7 @@ body {
     background: url('/images/background.png') top center repeat-x #587070;
     font-family: Arial,sans-serif;
     min-height: 870px;
+    min-width: 320px;
 }
 
 .container-main {
@@ -61,10 +62,15 @@ li {
     padding-left: 25px;
     list-style-type: none;
     background: no-repeat 3px center url('/images/mushroom.png');
-    line-height: 24px;
+    line-height: 26px;
+}
+
 ul.alt li {
     background-image: url('/images/poison_mushroom.png');
 }
+
+.btn {
+    margin-bottom: 10px;
 }
 
 .btn, .btn:hover {
@@ -99,13 +105,42 @@ ul.alt li {
 .btn-warning {
     &, &:hover {
         background-image: url('/images/warning_stripe.png');
-        box-shadow: 2px 2px 0px #A83434;
     }
     &:active {
         background-image: url('/images/warning_stripe_active.png');
-        top: 2px; left: 2px;
-        box-shadow: -2px -2px 0px #A83434;
     }
+}
+
+.btn-danger {
+    &, &:hover {
+        background-image: url('/images/danger_stripe.png');
+    }
+    &:active {
+        background-image: url('/images/danger_stripe_active.png');
+    }
+}
+
+.btn-danger.btn-lg {
+    &, &:hover {
+        box-shadow: 2px 2px 0px #A83434;
+    }
+    &:active {
+        box-shadow: -2px -2px 0px #A83434;
+        top: 2px; left: 2px;
+    }
+}
+
+.btn-lg {
+    padding: 10px 25px;
+    border-radius: 3px;
+    font-size: 30px;
+    color: white;
+    border-width: 1px;
+}
+
+.btn-sm {
+    padding: 2px 6px;
+    margin: 0;
 }
 
 .alert-danger {
@@ -157,6 +192,12 @@ ul.alt li {
         margin-bottom: 10px;
     }
 
+    .divider-inline {
+        display: inline-block;
+        margin: 0 7px 15px 4px;
+        vertical-align: bottom;
+    }
+
     .checkbox {
         margin: 0;
         padding: 0;
@@ -177,23 +218,27 @@ ul.alt li {
         padding: 7px 12px;
     }
 
-    .well {
-        padding-bottom: 9px;
-    }
+    // .well {
+    //     padding-bottom: 9px;
+    // }
+}
+
+.inline-form {
+    display: inline;
 }
 
 // Elements
 
 .well {
     margin-bottom: 10px;
-
+    padding: 12px 20px 3px;
 
     label {
         font-weight: normal;
     }
 
     h3, h4 {
-        margin: 6px 0;
+        margin: 6px 0 14px;
         font-size: 18px;
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     }
@@ -258,12 +303,17 @@ h2.santa {
     margin-left: 30px;
 }
 
-.btn-lg {
-    padding: 10px 25px;
-    border-radius: 3px;
-    font-size: 30px;
-    color: white;
-    border-width: 1px;
+.exception {
+    .names {
+        margin-right: 5px;
+    }
+}
+
+.launch {
+    h3 {
+        margin-left: 10px;
+        color: #EB2121;
+    }
 }
 
 @media (max-width: @screen-xs-max) {
@@ -272,13 +322,13 @@ h2.santa {
         left: 0;
     }
 
-    .container-main {
-        background-color: rgba(255, 255, 255, 0.8);
-    }
-
     .form-inline {
         .btn {
             margin-bottom: 15px;
+        }
+
+        .form-group, .divider-inline {
+            margin-bottom: 7px;
         }
     }
 }
