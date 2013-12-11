@@ -1,3 +1,7 @@
+var normalise = function(string) {
+    return string.toLowerCase().replace(/[- _]/g, '');
+};
+
 module.exports = function(User) {
     return {
         check: function(req, res, next) {
@@ -5,7 +9,7 @@ module.exports = function(User) {
                 res.locals.errors = {};
                 res.locals.user = user;
                 if (err) res.locals.errors.login = err;
-                if (user) user.admin = user.email == process.env.ADMIN_EMAIL;
+                if (user) user.admin = user.verified && user.email == process.env.ADMIN_EMAIL;
                 next();
             });
         },
@@ -48,7 +52,7 @@ module.exports = function(User) {
             var verifyError = "One of those answers was wrong";
             var user = res.locals.user;
 
-            var kon_match = req.body.verify_kon.match(/^\s*(97|ninety\s+seven)\s*$/i);
+            var kon_match = normalise(req.body.verify_kon) == process.env.KON_ANSWER;
             var email_match = req.body.verify_email == user.verifyCode;
 
             user.verified = kon_match && email_match;
