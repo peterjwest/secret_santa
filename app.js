@@ -1,4 +1,6 @@
 var express = require('express');
+var RedisStore = require('connect-redis')(express);
+var redisParser = require('./lib/redis-url-parser');
 var less = require('./lib/less-parser');
 var mongoose = require('mongoose');
 var sendgrid  = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
@@ -12,22 +14,31 @@ var app = express();
 
 mongoose.connect(process.env['MONGOLAB_URI'] || 'mongodb://localhost/secret-santa');
 
-app.configure(function() {
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
-    app.set('view options', { layout: false });
-    app.use(express.bodyParser());
-    app.use(express.cookieParser());
-    app.use(express.session({secret: '1234'}));
-    app.use(express.methodOverride());
-    app.use('/css/style.css', less('public/less/style.less'));
-    app.use(express.static(__dirname + '/public'));
-    app.use(auth.check);
-    app.use(main.users);
-    app.use(main.exclusions);
-    app.use(main.checkPossible);
-    app.use(app.router);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.set('view options', { layout: false });
+
+app.use(express.methodOverride());
+app.use(express.bodyParser());
+app.use(express.cookieParser());
+app.use(express.session({
+    store: new RedisStore(redisParser(process.env['REDISTOGO_URL'])),
+    secret: process.env['SESSION_SECRET'] || 'dev'
+}));
+
+app.use('/css/style.css', less('public/less/style.less'));
+app.use(express.static(__dirname + '/public'));
+
+app.use(auth.check);
+app.use(main.users);
+app.use(main.exclusions);
+app.use(main.checkPossible);
+app.use(function(req, res, next) {
+    res.locals.kon_question = process.env.KON_QUESTION;
+    next();
 });
+
+app.use(app.router);
 
 app.configure('development', function() {
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
