@@ -50,10 +50,6 @@ app.configure('production', function() {
 });
 
 app.get('/', function(req, res) {
-    if (res.locals.user) {
-        res.locals.user.encryptSanta('Pete');
-        res.locals.user.save();
-    }
     res.render('index');
 });
 
