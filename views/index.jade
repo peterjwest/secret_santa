@@ -40,7 +40,7 @@ html
                                     input#verify-kon.form-control(type='text', name='verify_kon', placeholder=kon_question, required)
 
                                 button#login-submit.btn.btn-primary.pull-right(type="submit") Verify me
-                    else
+                    else if user.santa
                         .well.well-primary
                             if santa
                                 a.btn.btn-primary.pull-right(href="/") Hide

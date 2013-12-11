@@ -65,6 +65,7 @@ module.exports = function(mongoose, sendgrid, verifyCode) {
         user.comparePassword(password, function(err, match) {
             if (err) return next(err);
             if (!match) return next("Your password was wrong");
+            if (!user.santa) return next("You don't have a secret santa yet");
             next(null, user.decryptSanta(password));
         });
     };
