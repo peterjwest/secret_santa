@@ -113,6 +113,13 @@ html
                         .form-button
                             button#exlude-submit.btn.btn-default.pull-right(type="submit") Exclude
 
+                    ul.alt
+                        each e in exclusions
+                            li.exception
+                                span.names #{e.users[0].name} and #{e.users[1].name}
+                                form.inline-form(method='POST', action='/exclude/'+e._id)
+                                    input(type='hidden', name='_method', value='delete')
+                                    button.btn.btn-danger.btn-sm(type="submit") Remove
 
                 .section
                     h2 Mission control

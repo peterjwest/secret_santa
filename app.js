@@ -5,8 +5,9 @@ var sendgrid  = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.S
 var verifyCode = require('./lib/verify-code');
 var solver = require('./lib/solver');
 var User = require('./model/user')(mongoose, sendgrid, verifyCode);
+var Exclusion = require('./model/exclusion')(mongoose);
 var auth = require('./controller/auth')(User);
-var main = require('./controller/main')(User);
+var main = require('./controller/main')(User, Exclusion);
 var app = express();
 
 mongoose.connect(process.env['MONGOLAB_URI'] || 'mongodb://localhost/secret-santa');
@@ -22,6 +23,7 @@ app.configure(function() {
     app.use(express.static(__dirname + '/public'));
     app.use(auth.check);
     app.use(main.users);
+    app.use(main.exclusions);
     app.use(app.router);
 });
 
@@ -61,12 +63,22 @@ app.get('/unlock', function(req, res) {
 });
 
 app.post('/exclude', auth.admin,  function(req, res) {
-    console.log(req.body)
-    var valid = false;
-    if (valid) {
-        return res.redirect('/');
-    }
-    res.render('index');
+    User.all().where('email').in(req.body.exclude).exec(function(err, users) {
+        if (err) res.render('index');
+
+        Exclusion.create(users, function(err, exclusion) {
+            if (err) return res.render('index');
+            return res.redirect('/');
+        });
+    });
+});
+
+app.delete('/exclude/:id', auth.admin,  function(req, res) {
+    Exclusion.remove({ _id: req.params.id }, function(err) {
+        User.removeExclusion(req.params.id, function(err) {
+            return res.redirect('/');
+        });
+    });
 });
 
 app.post('/launch', auth.admin,  function(req, res) {

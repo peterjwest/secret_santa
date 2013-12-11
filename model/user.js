@@ -9,7 +9,6 @@ var formatErrors = function(err) {
 };
 
 module.exports = function(mongoose, sendgrid, verifyCode) {
-
     var UserSchema = new mongoose.Schema({
         email: {
             type: String,
@@ -26,6 +25,7 @@ module.exports = function(mongoose, sendgrid, verifyCode) {
         verified: { type: Boolean, default: false },
         participating: { type: Boolean, default: true },
         santa: { type: String },
+        exclusions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Exclusion' }]
     });
 
     UserSchema.pre('save', function(next) {
@@ -44,7 +44,12 @@ module.exports = function(mongoose, sendgrid, verifyCode) {
     });
 
     UserSchema.methods.allowsUser = function(user) {
-        return true;
+        if (this._id == user._id) return false;
+        return this.exclusions.filter(function(e) {
+            return e.users.filter(function(u) {
+                return u.equals(user._id);
+            }).length > 0;
+        }).length == 0;
     };
 
     UserSchema.methods.encryptSanta = function(santa) {
@@ -120,9 +125,22 @@ module.exports = function(mongoose, sendgrid, verifyCode) {
         });
     };
 
-    UserSchema.statics.all = function(next) {
-        var model = this.model('User');
-        model.find({verified: true}).exec(next);
+    UserSchema.statics.all = function() {
+        return this.find({verified: true}).populate('exclusions');
+    };
+
+    UserSchema.statics.addExclusion = function(users, exclusion, next) {
+        var update = {$push: {exclusions: exclusion}};
+        this.update({_id: {$in: users}}, update, {multi: true}, function(err) {
+            next(err);
+        });
+    };
+
+    UserSchema.statics.removeExclusion = function(exclusion, next) {
+        var update = {$pull: {exclusions: exclusion}};
+        this.update({}, update, {multi: true}, function(err) {
+            next(err);
+        });
     };
 
     var User = mongoose.model('User', UserSchema);
