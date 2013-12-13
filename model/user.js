@@ -8,7 +8,7 @@ var formatErrors = function(err) {
     }) : [];
 };
 
-module.exports = function(mongoose, sendgrid, verifyCode) {
+module.exports = function(mongoose, emailer, verifyCode) {
     var UserSchema = new mongoose.Schema({
         email: {
             type: String,
@@ -81,6 +81,14 @@ module.exports = function(mongoose, sendgrid, verifyCode) {
         });
     };
 
+    UserSchema.methods.assignSanta = function(santa, next) {
+        emailer.launch(this, santa);
+        this.encryptSanta(santa.name);
+        this.save(function(err) {
+            next();
+        });
+    };
+
     UserSchema.statics.authenticate = function(details, next) {
         var loginError = 'Either your username or password was wrong';
         this.findOne({ email: details.email }, function(err, user) {
@@ -113,13 +121,7 @@ module.exports = function(mongoose, sendgrid, verifyCode) {
                 user.save(function(err) {
                     if (err) return next(formatErrors(err));
 
-                    sendgrid.send({
-                      to: user.email,
-                      from: 'secret-santa@knights-of-ni.co.uk',
-                      subject: 'Welcome to KON Secret Santa',
-                      text: 'To verify your account, copy this code to the site: '+user.verifyCode,
-                    }, function(err, json) { return err ? console.error(err) : console.log(json); });
-
+                    emailer.welcome(user);
                     next(null, user);
                 });
             });

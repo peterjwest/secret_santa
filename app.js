@@ -3,10 +3,11 @@ var RedisStore = require('connect-redis')(express);
 var redisParser = require('./lib/redis-url-parser');
 var less = require('./lib/less-parser');
 var mongoose = require('mongoose');
-var sendgrid  = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
+var sendgrid = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
+var emailer = require('./lib/emailer')(sendgrid);
 var verifyCode = require('./lib/verify-code');
 var solver = require('./lib/solver');
-var User = require('./model/user')(mongoose, sendgrid, verifyCode);
+var User = require('./model/user')(mongoose, emailer, verifyCode);
 var Exclusion = require('./model/exclusion')(mongoose);
 var auth = require('./controller/auth')(User);
 var main = require('./controller/main')(User, Exclusion);
@@ -93,8 +94,18 @@ app.delete('/exclude/:id', auth.admin,  function(req, res) {
 app.post('/launch', auth.admin,  function(req, res) {
     var solution = solver(res.locals.users);
     if (solution) {
-        console.log(solution.map(function(s) { return s.giver.name+' => '+s.recipient.name; }));
-        return res.redirect('/');
+        var sendSanta = function(solution, next) {
+            if (solution.length == 0) return next();
+
+            var pair = solution.pop();
+            pair.giver.assignSanta(pair.recipient, function() {
+                sendSanta(solution, next);
+            });
+        };
+
+        return sendSanta(solution, function() {
+            res.redirect('/');
+        });
     }
     res.render('index');
 });
