@@ -19,9 +19,9 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.set('view options', { layout: false });
 
-app.use(express.methodOverride());
 app.use(express.bodyParser());
 app.use(express.cookieParser());
+app.use(express.methodOverride());
 app.use(express.session({
     store: new RedisStore(redisParser(process.env['REDISTOGO_URL'])),
     secret: process.env['SESSION_SECRET'] || 'dev'
@@ -83,7 +83,7 @@ app.post('/exclude', auth.admin,  function(req, res) {
     });
 });
 
-app.delete('/exclude/:id', auth.admin,  function(req, res) {
+app.del('/exclude/:id', auth.admin,  function(req, res) {
     Exclusion.remove({ _id: req.params.id }, function(err) {
         User.removeExclusion(req.params.id, function(err) {
             return res.redirect('/');
