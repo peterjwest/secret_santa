@@ -21,6 +21,16 @@
     transition: @items;
 }
 
+.transform(@scale) {
+    transform: scale(@scale, @scale);
+    -ms-transform: scale(@scale, @scale);
+    -webkit-transform: scale(@scale, @scale);
+
+    transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+}
+
 .hide {
     display: none;
 }
@@ -35,6 +45,7 @@ body {
 }
 
 .container-main {
+    width: 600px;
     position: relative;
     background-color: white;
     margin-top: 160px;
@@ -288,14 +299,40 @@ ul.alt li {
 .title {
     display: block;
     position: absolute;
-    margin: 0 auto;
+    left: 0; top: -80px;
     height: 142px;
-    left: -30px; top: -80px;
+    width: 680px;
+    margin: 0 -30px;
     line-height: 142px;
 
-    img {
-        display: block;
-        margin: 0 auto;
+    h1 {
+        img {
+            position: absolute;
+            top: 0; left: 0;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .digit {
+            position: absolute;
+            top: 0;
+            background: url(/images/numbers.png) no-repeat;
+            width: 118px;
+            height: 120px;
+
+            &.first { left: 510px; top: 5px; }
+            &.second { left: 575px; top: 6px; }
+            &.digit-0 { background-position: 0 0; }
+            &.digit-1 { background-position: 0 -120px; }
+            &.digit-2 { background-position: 0 -240px; }
+            &.digit-3 { background-position: 0 -360px; }
+            &.digit-4 { background-position: 0 -480px; }
+            &.digit-5 { background-position: 0 -600px; }
+            &.digit-6 { background-position: 0 -720px; }
+            &.digit-7 { background-position: 0 -840px; }
+            &.digit-8 { background-position: 0 -960px; }
+            &.digit-9 { background-position: 0 -1080px; }
+        }
     }
 }
 
@@ -316,10 +353,25 @@ h2.santa {
     }
 }
 
+@media (max-width: 615px) {
+    .container-main {
+        width: auto;
+    }
+}
+
 @media (max-width: @screen-xs-max) {
     .title {
-        width: 100%;
-        left: 0;
+        position: static;
+        margin: 0 auto;
+        top: -140px;
+        width: 544px;
+        margin-top: -130px;
+        margin-bottom: -30px;
+
+        h1 {
+            margin: 0;
+            .transform(0.8);
+        }
     }
 
     .form-inline {
@@ -333,15 +385,30 @@ h2.santa {
     }
 }
 
-@media (max-width: 640px) {
-    .title img {
-        display: inline-block;
-        vertical-align: middle;
-        width: 100%;
+@media (max-width: 580px) {
+    .title {
+        width: 408px;
+        height: 100px;
+        margin-top: -110px;
+
+        h1 {
+            .transform(0.6);
+        }
     }
 }
 
 @media (max-width: 479px) {
+    .title {
+        width: 280px;
+        height: 60px;
+        margin-top: -65px;
+        margin-bottom: -8px;
+
+        h1 {
+            .transform(0.42);
+        }
+    }
+
     .container-main {
         margin-top: 80px;
         padding-top: 30px;

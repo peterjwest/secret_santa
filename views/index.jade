@@ -1,13 +1,15 @@
 doctype 5
 html
     head
-        title KON Secret Santa 2013
+        title= "KON Secret Santa "+year
         meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
         link(rel='stylesheet', href='/css/style.css')
     body.preload
         .container-main.container
-            a(href='')
-                h1.title
+            a.title(href='')
+                h1
+                    .digit.second(class="digit-"+year[3])
+                    .digit.first(class="digit-"+year[2])
                     img(src='/images/title.png', alt='KON Secret Santa 2013')
 
             .section

@@ -2,6 +2,7 @@ var express = require('express');
 var RedisStore = require('connect-redis')(express);
 var redisParser = require('./lib/redis-url-parser');
 var less = require('./lib/less-parser');
+var moment = require('moment');
 var mongoose = require('mongoose');
 var sendgrid = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
 var emailer = require('./lib/emailer')(sendgrid);
@@ -36,6 +37,7 @@ app.use(main.exclusions);
 app.use(main.checkPossible);
 app.use(function(req, res, next) {
     res.locals.kon_question = process.env.KON_QUESTION;
+    res.locals.year = moment().year().toString();
     next();
 });
 

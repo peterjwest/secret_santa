@@ -13,6 +13,7 @@
     "sendgrid": "0.3.1",
     "less": "1.5.0",
     "ursa": "0.8.0",
-    "connect-redis": "1.4.6"
+    "connect-redis": "1.4.6",
+    "moment": "2.5.1"
   }
 }
