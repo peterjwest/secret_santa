@@ -1,4 +1,5 @@
 /node_modules
 /legacy
+/dump.rdb
 /.env
 .DS_Store
