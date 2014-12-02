@@ -6,6 +6,7 @@
     "express": "3.4.0",
     "connect-mongo": "0.3.3",
     "mongoose": "3.6.20",
+    "dotenv": "^0.4.0",
     "jade": "0.35.0",
     "markdown": "0.5.0",
     "bcrypt": "0.7.7",
