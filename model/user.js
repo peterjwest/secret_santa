@@ -23,8 +23,7 @@ module.exports = function(mongoose, emailer, verifyCode) {
         lastAttempt: { type: Date },
         ip: { type: String },
         verified: { type: Boolean, default: false },
-        participating: { type: Boolean, default: true },
-        santa: { type: String },
+        participant: { type: mongoose.Schema.Types.ObjectId, ref: 'Participant' },
         exclusions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Exclusion' }]
     });
 
@@ -53,19 +52,19 @@ module.exports = function(mongoose, emailer, verifyCode) {
     };
 
     UserSchema.methods.encryptSanta = function(santa) {
-        this.santa = crypt.encrypt(this.key.public, santa);
+        return crypt.encrypt(this.key.public, santa);
     };
 
     UserSchema.methods.decryptSanta = function(password) {
-        return crypt.decrypt(this.key.private, password, this.santa);
+        return crypt.decrypt(this.key.private, password, this.participant.santa);
     };
 
     UserSchema.methods.unlockSanta = function(password, next) {
         var user = this;
         user.comparePassword(password, function(err, match) {
             if (err) return next(err);
-            if (!match) return next("Your password was wrong");
-            if (!user.santa) return next("You don't have a secret santa yet");
+            if (!match) return next("Password incorrect");
+            if (!user.participant.santa) return next("User does not have a secret santa");
             next(null, user.decryptSanta(password));
         });
     };
@@ -83,21 +82,31 @@ module.exports = function(mongoose, emailer, verifyCode) {
 
     UserSchema.methods.assignSanta = function(santa, next) {
         emailer.launch(this, santa);
-        this.encryptSanta(santa.name);
-        this.save(function(err) {
+        this.participant.santa = this.encryptSanta(santa.name);
+        this.participant.save(function(err) {
             next();
         });
     };
 
+    UserSchema.methods.participating = function(round) {
+        return !!(this.participant && this.participant.round.equals(round._id));
+    };
+
     UserSchema.statics.authenticate = function(details, next) {
         var loginError = 'Either your username or password was wrong';
+         var Model = this.model('User');
         this.findOne({ email: details.email }, function(err, user) {
             if (err) return next(err);
             if (!user || user.locked) return next([loginError], null);
 
             user.comparePassword(details.password, function(err, match) {
                 if (err) return next(err);
-                if (match) return next(null, user);
+                if (match) {
+                    return Model.populate(user, 'pariticpant', function(err) {
+                        if (err) return next(err);
+                        return next(null, user);
+                    });
+                }
                 next([loginError], null);
             });
         });
@@ -105,12 +114,12 @@ module.exports = function(mongoose, emailer, verifyCode) {
 
     UserSchema.statics.create = function(details, next) {
         var registerError = "You can't register with that name or email";
-        var model = this.model('User');
+        var Model = this.model('User');
         this.findOne({ $or: [{email: details.email}, {name: details.name}] }, function(err, user) {
             if (err) return next(err);
             if (user) return next([registerError], null);
 
-            var user = new model;
+            var user = new Model;
             user.name = details.name;
             user.email = details.email;
             user.password = details.password;

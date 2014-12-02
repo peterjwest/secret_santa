@@ -97,9 +97,16 @@ html
             .section
                 h2 Santas
                 p Who's entered this year:
-                if users
+                ul: each u in round.users()
+                    li #{u.name} #{user && user.admin ? '('+u.email+')' : ''}
+
+                if user && user.admin
+                    h3 Losers
+                    p Who's not bothered:
                     ul: each u in users
-                        li #{u.name} #{user && user.verified ? '('+u.email+')' : ''}
+
+                        if round.users().filter(function(p) { return p._id.equals(u._id); }).length == 0
+                            li #{u.name} #{user && user.admin ? '('+u.email+')' : ''}
 
             if user && user.admin
                 .section

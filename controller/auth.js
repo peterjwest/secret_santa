@@ -5,7 +5,7 @@ var normalise = function(string) {
 module.exports = function(User) {
     return {
         check: function(req, res, next) {
-            res.locals.user = User.findOne({_id: req.session.user}).exec(function(err, user) {
+            res.locals.user = User.findOne({_id: req.session.user}).populate('participant').exec(function(err, user) {
                 res.locals.errors = {};
                 res.locals.user = user;
                 if (err) res.locals.errors.login = err;

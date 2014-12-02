@@ -13,8 +13,10 @@ var verifyCode = require('./lib/verify-code');
 var solver = require('./lib/solver');
 var User = require('./model/user')(mongoose, emailer, verifyCode);
 var Exclusion = require('./model/exclusion')(mongoose);
+var Round = require('./model/round')(mongoose, moment);
+var Participant = require('./model/participant')(mongoose);
 var auth = require('./controller/auth')(User);
-var main = require('./controller/main')(User, Exclusion);
+var main = require('./controller/main')(User, Exclusion, Round, Participant);
 var app = express();
 
 mongoose.connect(process.env['MONGOLAB_URI'] || 'mongodb://localhost/secret-santa');
@@ -37,10 +39,10 @@ app.use(express.static(__dirname + '/public'));
 app.use(auth.check);
 app.use(main.users);
 app.use(main.exclusions);
+app.use(main.round);
 app.use(main.checkPossible);
 app.use(function(req, res, next) {
     res.locals.kon_question = process.env.KON_QUESTION;
-    res.locals.year = moment().year().toString();
     next();
 });
 
@@ -77,6 +79,10 @@ app.get('/unlock', function(req, res) {
     res.redirect('/');
 });
 
+app.post('/participate', auth.authenticated, main.participate, function(req, res) {
+    res.redirect('/');
+});
+
 app.post('/exclude', auth.admin,  function(req, res) {
     User.all().where('email').in(req.body.exclude).exec(function(err, users) {
         if (err) res.render('index');
@@ -97,22 +103,31 @@ app.del('/exclude/:id', auth.admin,  function(req, res) {
 });
 
 app.post('/launch', auth.admin,  function(req, res) {
-    var solution = solver(res.locals.users);
-    if (solution) {
-        var sendSanta = function(solution, next) {
-            if (solution.length == 0) return next();
+    var round = res.locals.round;
+    var User = mongoose.model('User');
 
-            var pair = solution.pop();
-            pair.giver.assignSanta(pair.recipient, function() {
-                sendSanta(solution, next);
+    User.populate(round.users(), { path: 'participant' }, function(err) {
+        var solution = solver(round.users());
+        if (!round.started && solution) {
+            var sendSanta = function(solution, next) {
+                if (solution.length == 0) return next();
+
+                var pair = solution.pop();
+                pair.giver.assignSanta(pair.recipient, function() {
+                    sendSanta(solution, next);
+                });
+            };
+
+            return sendSanta(solution, function() {
+                round.started = true
+                round.save(function(err) {
+                    console.log(err);
+                    res.redirect('/');
+                });
             });
-        };
-
-        return sendSanta(solution, function() {
-            res.redirect('/');
-        });
-    }
-    res.render('index');
+        }
+        res.render('index');
+    });
 });
 
 app.get('/logout', auth.logout, function(req, res) {
