@@ -24,8 +24,11 @@ module.exports = function(mongoose, moment) {
         var Participant = this.model('Participant');
         var Exclusion = this.model('Exclusion');
 
+        // The current year switches halfway through the year
+        var currentYear = moment().subtract(6, 'months').year();
+
         return this.where('year')
-            .equals(moment().year())
+            .equals(currentYear)
             .populate('participants')
             .findOne(function(err, year) {
                 if (err) return next(err);
