@@ -1,7 +1,7 @@
 doctype 5
 html
     head
-        title= "KON Secret Santa "+year
+        title= "KON Secret Santa "+round.year
         meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
         meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
         link(rel='stylesheet', href='/css/style.css')
@@ -9,8 +9,8 @@ html
         .container-main.container
             a.title(href='')
                 h1
-                    .digit.second(class="digit-"+year[3])
-                    .digit.first(class="digit-"+year[2])
+                    .digit.second(class="digit-"+round.yearUnit())
+                    .digit.first(class="digit-"+round.decade())
                     img(src='/images/title.png', alt='KON Secret Santa 2013')
 
             .section
@@ -43,7 +43,7 @@ html
                                     input#verify-kon.form-control(type='text', name='verify_kon', placeholder=kon_question, required)
 
                                 button#login-submit.btn.btn-primary.pull-right(type="submit") Verify me
-                    else if user.santa
+                    else if round.started
                         .well.well-primary
                             if santa
                                 a.btn.btn-primary.pull-right(href="/") Hide
@@ -62,6 +62,12 @@ html
                                         input#login-password.form-control(type='password', name='password', placeholder='Password',required)
 
                                     button#login-submit.btn.btn-primary(type="submit") Unlock
+
+                    if !user.participating(round)
+                        .well.well-primary
+                            h3 Take part in Secret Santa #{round.year}
+                            form.form-inline(method='POST', action='/participate').clearfix
+                                button#login-submit.btn.btn-primary.btn-lg(type="submit") Add me
 
                 else
                     - login = login || {}
@@ -122,10 +128,14 @@ html
 
                 .section
                     h2 Mission control
-                    form.launch(method='POST', action='/launch')
-                        button.btn.btn-danger.btn-lg.pull-left(type='submit', disabled=!possible) Launch
-                        if !possible
-                            h3.pull-left Warning! secret santa not possible.
+                    if round.started
+                        h3.alert.alert-success Santa launched!
+                    else
+                        form.launch(method='POST', action='/launch')
+                            button.btn.btn-danger.btn-lg.pull-left(type='submit', disabled=!possible) Launch
+                            if !possible
+                                h3.pull-left Warning! secret santa not possible.
+
 
         script(src='/js/vendor/jquery-1.10.2.js')
         script(src='/js/vendor/placeholders.jquery-3.0.2.js')
