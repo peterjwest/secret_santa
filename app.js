@@ -1,3 +1,6 @@
+var dotenv = require('dotenv');
+dotenv.load();
+
 var express = require('express');
 var RedisStore = require('connect-redis')(express);
 var redisParser = require('./lib/redis-url-parser');
