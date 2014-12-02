@@ -4,6 +4,7 @@ dotenv.load();
 var express = require('express');
 var RedisStore = require('connect-redis')(express);
 var redisParser = require('./lib/redis-url-parser');
+var request = require('request');
 var less = require('./lib/less-parser');
 var moment = require('moment');
 var mongoose = require('mongoose');
@@ -133,6 +134,13 @@ app.post('/launch', auth.admin,  function(req, res) {
 app.get('/logout', auth.logout, function(req, res) {
     res.redirect('/');
 });
+
+// Every 30 minutes, ping a specified URL
+setInterval(function() {
+    if (process.env.PING_URL) {
+        request.get(process.env.PING_URL);
+    }
+}, 1000 * 60 * 30);
 
 if (!module.parent) {
     var port = process.env.PORT || 3000;
